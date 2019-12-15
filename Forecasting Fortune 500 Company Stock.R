@@ -58,7 +58,7 @@ test4 <- test$ticker
 write.table(test, file="insert your path here ", sep=",")
 
 ​#Reading the table
-stock_table <- read.table("C:/Users/SXC3GFL/OneDrive - The Home Depot/Documents/Hugo Project Updates/Stock_Ticker_V2.xlsx", header= FALSE, sep = "",fill = TRUE )
+stock_table <- read.table("insert your path here ", header= FALSE, sep = "",fill = TRUE )
 ​
 ​#Another check again
 View(stock_table)
