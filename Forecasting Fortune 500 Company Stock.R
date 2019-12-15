@@ -63,7 +63,7 @@ stock_table <- read.table("insert your path here ", header= FALSE, sep = "",fill
 ​#Another check again
 View(stock_table)
 ​
-#Finally importing our data into Google bigquery using the packahges below and the commands below
+#Finally importing our data into Google bigquery using the packages below and the commands below
 library(bigQueryR)
 bqr_auth()
 bqr_upload_data(projectId = 'insert your project ID here',
