@@ -2,6 +2,10 @@
 
 Workspace where I will post some of the personal data science projects I work on.
 
-In the "Forecasting Fortune 500 company stock.R" file you will find how to get the data
-for the stock. The actual forecast is NOT done here in this space. If you have Rstudio
-downloaded everything should run smoothly. 
+**Forecasting Fortune 500 company stock.R** file you will find how to get the data for the stock. Meaning, the packages used in that file is how we retrieved all the fortune 500 companies historical stock prices.
+
+**Prophet Forecasting Fortune 500 Company Stock.R** file you will find the prophet forecasting script that actually creates your forecast. Here we account for holidays and build out the model for all the stock using a for loop.
+
+**Tools used** R, GoogleBigquery, SQL.
+
+ If you have Rstudio downloaded everything should run smoothly. 
