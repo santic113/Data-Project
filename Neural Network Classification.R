@@ -19,7 +19,7 @@ data_scaled <- scale(data[,2:18],center = min_data, scale = max_data - min_data)
 Private <- as.numeric(College$Private)-1
 data_scaled <- cbind(Private,data_scaled)
 
-#Splitting out the training data and the testing data
+#Splitting out the training data and the testing data. I split out the data 70% training and 30% testing.
 index <- sample(1:nrow(data),round(0.70*nrow(data)))
 train_data <- as.data.frame(data_scaled[index,])
 test_data <- as.data.frame(data_scaled[-index,])
