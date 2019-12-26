@@ -3,7 +3,6 @@
 install.packages('bigrquery')
 library(bigrquery)
 install.packages('bigQueryR')
-
 library(bigQueryR)
 install.packages('dplyr')
 library(dplyr)
