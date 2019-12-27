@@ -6,7 +6,7 @@ Workspace where I will post some of the personal data science projects I work on
 
 **Prophet Forecasting Fortune 500 Company Stock.R** file you will find the prophet forecasting script that actually creates your forecast. Here we account for holidays and build out the model for all the stock using a for loop.
 
-**Tools used** - R, Google BigQuery, SQL, and Atom as my text editor.
+**Tools used** - R, Google BigQuery, SQL, Tableau as my visual, and Atom as my text editor.
 
 **Tableau visualizations** of the forecasted stock prices can be found on Tableau public using this link: https://public.tableau.com/profile/santiago.canon#!/vizhome/ForecastallFortune500CompayStock60DaysOut/ForecastingStockDashboard
 
