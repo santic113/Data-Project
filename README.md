@@ -12,4 +12,6 @@ Workspace where I will post some of the personal data science projects I work on
 
 **Neural Network Classification.R** - Is a classification model that attempts to predict weather a university is a public or private university based off the 18 inputs we provide the model. I used the ISLR library to retrieve data on the universities used in the model.
 
+**IBM Attrition Analysis**  - Aim was to find out the main reasons why an employee may leave the IBM company (data is a mockup from IBM data scientists so its not real but structured very well ). The majority of the code is an exploratory analysis of the data. Included are correlation scripts and a DecisionTree that attributes the main reasons to why an employee may leave the company. 
+
  If you have Rstudio downloaded everything should run smoothly.
