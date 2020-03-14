@@ -1,97 +1,56 @@
+#Import Libraries Needed for Analysis. Dig into h2o package issue.
+li
+library(xgboost)brary(tidyverse)
+library(skimr)
+library(GGally)
+library(plotly)
+library(viridis)
+library(caret)
+library(randomForest)
+library(e1071)
+library(rpart)
+library(ggcorrplot)
+library(rpart.plot)
+library(corrgram)
+library(h2o)
+library(ggplot2)
+library(ggthemes)
+library(psych)
+library(scales)
+library(treemap)
+library(treemapify)
+library(repr)
+library(cowplot)
+library(magrittr)
+library(ggpubr)
+library(RColorBrewer)
+library(plotrix)
+library(ggrepel)
+library(forcats)
+library(reshape2)
+library(caTools)
+library(tree)
+library(rattle)
+options(repr.plot.width=8, repr.plot.height=6)
+options(warn=-1)
 
-#Uploading the data and taking a look at it in small smaple and the entire table view. Make your '/' are right aligned
-df <- read.csv(file = "C:/Users/santi/Documents/R Kaggle Data/IBM Attrition Data.csv", header = TRUE, sep=  ",")
+#Uploading our Data into R via a CSV file
+df <- read.csv("C:/Users/santi/Documents/R Kaggle Data/IBM_Attrition_Data_V2.csv")
 head(df)
+
+#This variable will be ised for tranining and testing.
+original_df <- df
+
+#Viewing the data in a table.
 View(df)
 
-#Install our needed packages and libraries
-install.packages('tidyverse')
-library(tidyverse)
-install.packAges("dbplyr")
-install.pack('dplyr')
-library(dplyr)
-library(dbplyr)
-install.packAges('ggplot2')
-library(ggplot2)
-install.pack.Ages('neuralnet')
-library(neuralnet)
-install.packAges('caret')
-library(caret)
-install.packAges('e1071')
-library(e1071)
-suppressPackageStartupMessAges(library(tidyverse))
-install.packages('skimr')
-suppresspackageStartupMessAges(library(skimr))
-install.packges('GGally')
-suppresspackageStartupMessAges(library(GGally))
-install.packages('plotly')
-suppressPackAgeStartupmessages(library(plotly))
-install.packAges('viridis')
-suppressPackStartupmessages(library(viridis))
-install.packages('caret')
-suppresspackagesStartupmessages(library(caret))
-install.packages('randomForest')
-suppresspackagestartupmessages(library(randomForest))
-install.packages('e1071')
-suppresspackagestartupmessages(library(e1071))
-install.packages('rpart')
-suppresspackagestartupmessages(library(rpart))
-install.packages('xgboost')
-suppresspackagestartupmessages(library(xgboost))
-install.packages('h2o')
-suppresspackagestartupmessages(library(h2o))
-install.packages('ggcorrplot')
-suppresspackagestartupmessages(library(ggcorrplot))
-install.packages('rpart.plot')
-suppresspackagestartupmessages(library(rpart.plot))
-install.packages('corrgram')
-suppresspackagestartupmessages(library(corrgram))
-install.packages('lightgbm')
-suppresspackagestartupmessages(library(lightgbm))
-suppresspackagestartupmessages(library(ggplot2))
-install.packages('ggthemes')
-suppresspackagestartupmessages(library(ggthemes))
-install.packages('psych')
-suppresspackagestartupmessages(library(psych))
-install.packages('scales')
-suppresspackagestartupmessages(library(scales))
-install.packages('treemap')
-suppresspackagestartupmessages(library(treemap))
-install.packages('treemapify')
-suppresspackagestartupmessages(library(treemapify))
-install.packages('repr')
-suppresspackagestartupmessages(library(repr))
-install.packages('cowplot')
-suppresspackagestartupmessages(library(cowplot))
-install.packages('magrittr')
-suppresspackagestartupmessages(library(magrittr))
-install.packages('ggpubr')
-suppresspackagestartupmessages(library(ggpubr))
-install.packages('RColorBrewer')
-suppresspackagestartupmessages(library(RColorBrewer))
-install.packages('plotrix')
-suppresspackagestartupmessages(library(plotrix))
-install.packages('ggrepel')
-suppresspackagestartupmessages(library(ggrepel))
-install.packages('forcasts')
-suppresspackagestartupmessages(library(forcats))
-install.packages('reshape2')
-suppresspackagestartupmessages(library(reshape2))
-install.packages('caTools')
-suppresspackagestartupmessages(library(caTools))
-install.packages('tree')
-suppresspackagestartupmessages(library(tree))
-install.packages('rattle')
-suppresspackagestartupmessages(library(rattle))
+#Getting a summary of our data.
+df %>% glimpse
 
+#Understanding the Distribution of our data.
 options(repr.plot.width=8, repr.plot.height=4)
-df %>%
-  rename(
-    ï..ï..Age =  ï..ï..ï..Age
-  )
 
-df$ï..ï..ï..Age
-
+#Attrition Count. Simple Yes/No Chart
 attritions_number <- df %>% group_by(Attrition) %>% summarise(Count=n()) %>%
   ggplot(aes(x=Attrition, y=Count)) + geom_bar(stat="identity", fill="orange", color="grey40") + theme_bw() + coord_flip() +
   geom_text(aes(x=Attrition, y=0.01, label= Count),
@@ -99,35 +58,39 @@ attritions_number <- df %>% group_by(Attrition) %>% summarise(Count=n()) %>%
             colour="black", fontface="bold",
             angle=360) + labs(title="Employee Attrition (Amount)", x="Employee Attrition",y="Amount") + theme(plot.title=element_text(hjust=0.5))
 
-attrition_percentï..ï..Age <- df %>% group_by(Attrition) %>% summarise(Count=n()) %>%
+
+attrition_percentage <- df %>% group_by(Attrition) %>% summarise(Count=n()) %>%
   mutate(pct=round(prop.table(Count),2) * 100) %>%
   ggplot(aes(x=Attrition, y=pct)) + geom_bar(stat="identity", fill = "dodgerblue", color="grey40") +
   geom_text(aes(x=Attrition, y=0.01, label= sprintf("%.2f%%", pct)),
             hjust=0.5, vjust=-3, size=4,
-            colour="black", fontface="bold") + theme_bw() + labs(x="Employee Attrition", y="Percentï..ï..Age") +
+            colour="black", fontface="bold") + theme_bw() + labs(x="Employee Attrition", y="Percentage") +
   labs(title="Employee Attrition (%)") + theme(plot.title=element_text(hjust=0.5))
 
-plot_grid(attritions_number, attrition_percentï..ï..Age, align="h", ncol=2)
+#Plotting out our Results Above
+plot_grid(attritions_number, attrition_percentage, align="h", ncol=2)
 
+#Average age by Gender
+avg.age <- df %>% select(Gender,Age) %>% group_by(Gender) %>% summarize(avg=mean(Age))
+avg.age
 
-
-# Let's look closely at the distribution of the ï..Age of our employees
+#Age Distribution by Gender
+# Let's look closely at the distribution of the Age of our employees
 # Why? Unlike the older generation, millenials tend to switch workplaces more and thus that could
 # be an explanation of why we have the current levels of attrition
 options(repr.plot.width=8, repr.plot.height=6)
 
 dat_text <- data.frame(
   label = c("Mean = 37.33 \n Years Old", "Mean = 36.65 \n Years Old"),
-  Gender   = c("Female", "Male")
+  Gender = c("Female", "Male")
 )
 
-
-
-gender.dist <- df %>% select(Gender, ï..Age) %>% filter(Gender == 'Male' | Gender== "Female") %>%
-  filter(!is.na(ï..Age)) %>% group_by(Gender) %>%
-  ggplot(aes(x=ï..Age)) + geom_density(aes(fill=Gender), alpha=0.8, show.legend=FALSE) + facet_wrap(~Gender) + theme_minimal() +
-  geom_vline(aes(xintercept=mean(ï..Age)),
-             color="red", linetype="dashed", size=1) + labs(title="ï..Age Distribution") +
+#Distribution facet wrap
+gender.dist <- df %>% select(Gender, Age) %>% filter(Gender == 'Male' | Gender== "Female") %>%
+  filter(!is.na(Age)) %>% group_by(Gender) %>%
+  ggplot(aes(x=Age)) + geom_density(aes(fill=Gender), alpha=0.8, show.legend=FALSE) + facet_wrap(~Gender) + theme_minimal() +
+  geom_vline(aes(xintercept=mean(Age)),
+             color="red", linetype="dashed", size=1) + labs(title="Age Distribution") +
   theme(plot.title=element_text(hjust=0.5)) + scale_fill_manual(values=c("#F781F3", "#819FF7")) +
   geom_text(
     data    = dat_text,
@@ -136,24 +99,37 @@ gender.dist <- df %>% select(Gender, ï..Age) %>% filter(Gender == 'Male' | Gend
     vjust   = -1
   )
 
-
-overall.dist <- df %>% select(Gender, ï..Age) %>% filter(!is.na(ï..Age)) %>%
-  ggplot(data=df, mapping=aes(x=ï..Age)) + geom_density(color="darkblue", fill="lightblue") +
-  geom_vline(aes(xintercept=mean(ï..Age)),
-             color="red", linetype="dashed", size=1) +  theme_minimal() + labs(x="Overall ï..Age") +
+overall.dist <- df %>% select(Gender, Age) %>% filter(!is.na(Age)) %>%
+  ggplot(data=df, mapping=aes(x=Age)) + geom_density(color="darkblue", fill="lightblue") +
+  geom_vline(aes(xintercept=mean(Age)),
+             color="red", linetype="dashed", size=1) +  theme_minimal() + labs(x="Overall Age") +
   annotate("text", label = "Mean = 36.92 Years Old", x = 50, y = 0.03, color = "black")
 
 
 plot_grid(gender.dist, overall.dist, nrow=2)
 
+# Boxplot with attrition in the X-axis and Job Satisfaction in the y-Axis
+options(repr.plot.width=8, repr.plot.height=6)
 
-p <- ggplot(df, aes(x=Gender, y=MonthlyIncome, color=Gender, fill=Gender)) + geom_boxplot() +
+#Box plot of satisfaction by Gender and attrition. Our measure is Jobsatisfaction
+box.attrition <- df %>% select(Attrition, JobSatisfaction, Gender) %>%
+  ggplot(aes(x=Attrition, y=JobSatisfaction, fill=Attrition)) + geom_boxplot(color="black") + theme_minimal() + facet_wrap(~Gender) +
+  scale_fill_manual(values=c("#FA5858", "#9FF781"))
+
+# Distribution of Job Satisfaction
+dist.satisfaction <- df %>% select(JobSatisfaction) %>%
+  ggplot(aes(x=JobSatisfaction)) + geom_density(color="#013ADF", fill="#81BEF7", trim=TRUE) + theme_tufte() + xlim(range(c(1,4)))
+
+plot_grid(box.attrition, dist.satisfaction, nrow=2)
+
+#Monthly Income by Gender
+Income_by_Gender <- ggplot(df, aes(x=Gender, y=MonthlyIncome, color=Gender, fill=Gender)) + geom_boxplot() +
   scale_fill_manual(values=c("#F5A9F2", "#5882FA")) + scale_color_manual(values=c("#FE2EF7", "#5858FA")) +
   coord_flip() + labs(title="Are there any Gender Disparities in Income?")
 
-p
+Income_by_Gender
 
-
+#Average Income and Presence by Department
 options(repr.plot.width=10, repr.plot.height=8)
 
 gender.income <- df %>% select(Gender, MonthlyIncome) %>% group_by(Gender) %>% summarise(avg_income=round(mean(MonthlyIncome), 2)) %>%
@@ -171,7 +147,6 @@ gender.department <- df %>% group_by(Department, Gender) %>% summarise(amount=n(
   labs(title="Number of Employees \n
 by Department",x="Department", y="Number of employees")
 
-
 departments <- df %>% group_by(Department, Gender) %>% summarise(amount=n()) %>%
   ggplot(aes(x="", y=amount, fill=Department), show.legend=FALSE, width=) + geom_bar(stat="identity", position="dodge") + theme_minimal() +
   theme(axis.text.x = element_text(angle = 90), plot.title=element_text(hjust=0.5), aspect.ratio=1) +
@@ -180,19 +155,15 @@ by Department") + coord_polar() + scale_fill_manual(values=c("#FE642E", "#0080FF
 
 plot_grid(gender.income, gender.department, departments, ncol=2, nrow=2)
 
-
 # Distribution of Number of Companies Worked by Attrition and Age
 # We want to see if young people have worked in more companies than the older generation
 # This might prove that the millenials tend to be more picky with regards to jobs than the older generation.
 options(repr.plot.width=8, repr.plot.height=7)
 
-
 # First we must create categoricals variables based on Age
-df$Generation <- ifelse(df$ï..Age<37,"Millenials",
-                        ifelse(df$ï..Age>=38 & df$ï..Age<54,"Generation X",
-                               ifelse(df$ï..Age>=54 & df$ï..Age<73,"Boomers","Silent"
-                               )))
-
+df$Generation <- ifelse(df$Age<37,"Millenials",
+ifelse(df$Age>=38 & df$Age<54,"Generation X",
+ ifelse(df$Age>=54 & df$Age<73,"Boomers","Silent" )))
 
 # Let's see the distribution by generation now
 generation.dist <- df %>% select(Generation, NumCompaniesWorked, Attrition) %>%
@@ -208,10 +179,8 @@ generation.dist <- df %>% select(Generation, NumCompaniesWorked, Attrition) %>%
                                                                                              axis.text.x=element_text(colour="white"), axis.text.y=element_text(colour="white"),
                                                                                              axis.title=element_text(colour="white"))
 
-
 # 2.69
 overall.avg <- df %>% select(Generation, NumCompaniesWorked) %>% summarize(avg_ov=mean(NumCompaniesWorked))
-
 
 
 # Let's find the Average Numbers of Companies worked by Generation
@@ -242,7 +211,6 @@ avg.comp <- df %>% select(Generation, NumCompaniesWorked, Attrition) %>% group_b
 plot_grid(generation.dist, avg.comp, nrow=2)
 
 
-# Distribution of MonthlyIncome by Generation
 options(repr.plot.width=8, repr.plot.height=5)
 
 conti_df <- as.data.frame.matrix(table(df$Generation, df$Attrition))
@@ -298,7 +266,7 @@ p1 +
                                         x="Share of Employees", y="Frequency") +
   theme(plot.title=element_text(hjust=0.5))
 
-
+#Attrition by Educational Level
 options(repr.plot.width=8, repr.plot.height=4)
 
 # Give names for the different education levels.
@@ -318,19 +286,7 @@ edu.level <- df %>% select(Educational_Levels, Attrition) %>% group_by(Education
 
 edu.level
 
-
-
-edu.pct <- df %>% select(Educational_Levels, Attrition) %>% group_by(Educational_Levels, Attrition) %>%
-  summarize(n=n()) %>% mutate(pct=round(prop.table(n),2) * 100) %>% arrange(desc(pct)) %>%
-  ggplot(aes(x=fct_reorder(Educational_Levels,pct), y=pct, fill=Attrition, color=Attrition)) + geom_bar(stat="identity") + facet_wrap(~Attrition) +
-  coord_flip() + geom_label(aes(label=paste0(pct, "%"), fill = Attrition), colour = "white", fontface = "italic") +
-  scale_fill_manual(values=c("#2EF688", "#F63A2E")) + scale_color_manual(values=c("#09C873","#DD1509")) +
-  labs(x="", y="Number of Employees (%)", title="Attrition by Educational Level", subtitle="Percentage (%) by Employee")+ theme_wsj() +
-  theme(legend.position="none", plot.title=element_text(hjust=0.5, size=14), plot.subtitle=element_text(hjust=0.5, size=12, face="italic"))
-
-edu.pct
-
-
+#Average Income by Department
 # Let's determine if income was a major factor when it came to leaving the company.
 # Let's start by taking the average monthly income of people who left the company and people who stayed in the company
 # Group by department
@@ -347,11 +303,9 @@ avg.income <- df %>% select(Department, MonthlyIncome, Attrition) %>% group_by(A
             hjust=-0.5, vjust=0, size=3,
             colour="black", fontface="bold",
             angle=90)
-
-
 avg.income
 
-
+#Determining Satisifaction by Income
 options(repr.plot.width=8, repr.plot.height=5)
 
 # Turn the column to factor: One because it should not be considered an integer
@@ -377,11 +331,9 @@ high.inc <- df %>% select(JobSatisfaction, MonthlyIncome, Attrition) %>% group_b
             hjust=-0.5, vjust=-0.5, size=4,
             colour="black", fontface="italic",
             angle=360)
-
-
 high.inc
 
-
+#Income and the Level of Attrition:
 options(repr.plot.width=8, repr.plot.height=7)
 
 per.sal <- df %>% select(Attrition, PercentSalaryHike, MonthlyIncome) %>%
@@ -404,7 +356,7 @@ perf.inc <- df %>% select(PerformanceRating, MonthlyIncome, Attrition) %>% group
 
 plot_grid(per.sal, perf.inc, nrow=2)
 
-
+#Average and Percent Difference of Daily Rates:
 # daily rates by JobRole
 options(repr.plot.width=10, repr.plot.height=7)
 
@@ -438,12 +390,12 @@ percent_diff <- combined_df %>% mutate(pct_diff=round(((avg_noattrition - avg_at
 
 plot_grid(daily_r, percent_diff, nrow=2)
 
-
+#Level of Attrition by Overtime Status
 df %>% select(OverTime, Attrition) %>% filter(Attrition == "Yes") %>% group_by(Attrition, OverTime) %>%
   summarize(n=n()) %>% mutate(pct=round(prop.table(n),2) * 100)
 
-
 options(repr.plot.width=10, repr.plot.height=5)
+
 
 overtime_percent <- df %>% select(OverTime, Attrition) %>% filter(Attrition == "Yes") %>% group_by(Attrition, OverTime) %>%
   summarize(n=n()) %>% mutate(pct=round(prop.table(n),2) * 100) %>%
@@ -472,14 +424,9 @@ overtime_number <- df %>% select(OverTime, Attrition) %>% filter(Attrition == "Y
         legend.background = element_rect(fill="#FFF9F5",
                                          size=0.5, linetype="solid",
                                          colour ="black"))
-
-
-
-
-
 plot_grid(overtime_percent, overtime_number)
 
-
+# Create a TreeMap with the number of Employees by JobRole
 library(tree)
 role.amount <- df %>% select(JobRole) %>% group_by(JobRole) %>% summarize(amount=n()) %>%
   ggplot(aes(area=amount, fill=JobRole, label=JobRole)) +  geom_treemap() +
@@ -495,7 +442,8 @@ employees by type of job role.",
 
 role.amount
 
-
+# Median Salary by JobRole
+# Highest percentage of attrition by JobRole
 options(repr.plot.width=8, repr.plot.height=5)
 
 # Median Salary
@@ -520,7 +468,7 @@ p2 <- ggplot(job.sal, aes(x=reorder(JobRole,-avg), y=avg)) +  geom_bar(stat="ide
 
 plot_grid(p1, p2, ncol=2)
 
-
+#Attrition by Job Role
 # The Funnel with the Attrition Rates by Job Role
 options(repr.plot.width=10, repr.plot.height=6)
 attr.job <- df %>% select(JobRole, Attrition) %>% group_by(JobRole, Attrition) %>% summarize(amount=n()) %>%
@@ -535,7 +483,6 @@ no.attr <- attr.job %>% filter(Attrition == "No") %>% arrange(JobRole)
 par(mar = pyramid.plot(no.attr$pct, yes.attr$pct, labels = unique(attr.job$JobRole),
                        top.labels=c("No","","Yes"), main = "Attrition by Job Role",
                        gap=30, show.values = T, rxcol = yesfunc(9), lxcol = nofunc(9)))
-
 
 # Create a Categorical Value for Years with Current Manager
 # Create a Categorical Value for RelationShip Satisfaction (We will use facet_wrap here)
@@ -569,6 +516,7 @@ rel.dist <- df %>% select(RelationshipSatisfaction, Attrition) %>% group_by(Attr
 
 plot_grid(rel.sat, rel.dist, nrow=2)
 
+
 # Environment Satisfaction let's use the changes by JobRole
 options(repr.plot.width=8, repr.plot.height=5)
 
@@ -580,8 +528,7 @@ ggplot(env.attr, aes(x=JobRole, y=avg.env)) + geom_line(aes(group=Attrition), co
                                                                         plot.background=element_rect(fill="#FFF1E0")) +
   labs(title="Working Environment", y="Average Environment Satisfaction", x="Job Position") + scale_color_manual(values=c("#58FA58", "#FA5858"))
 
-
-#Attrition by department
+#Is there Work Life Balance
 options(repr.plot.width=8, repr.plot.height=4)
 
 attritions <- df %>% filter(Attrition == "Yes")
@@ -615,6 +562,7 @@ med.distance <- no.attritions %>% select(DistanceFromHome) %>% summarize(med.dis
 
 attritions$Median_Distance <- ifelse(attritions$DistanceFromHome < 7, "Below Average", "Above Average")
 
+
 # Distribution of both Distance from Work Status
 dist <- attritions %>% select(Median_Distance, DistanceFromHome) %>%
   ggplot(aes(x=DistanceFromHome, fill=Median_Distance)) + geom_density() + facet_wrap(~Median_Distance) + theme_minimal() +
@@ -640,6 +588,41 @@ p2 <- attritions %>% select(Median_Distance) %>% group_by(Median_Distance) %>% s
   scale_color_manual(values=c("#DF0101", "#013ADF")) + labs(x="Distance from Work Status", y="Percentage (%)")
 
 plot_grid(p1, p2, ncol=2)
+
+
+# Let's see what the Average MonthlyIncome is for those who have stockoptionlevels and for those who don't.
+# First let's see how many employees have Stockoption levels.
+options(repr.plot.width=10, repr.plot.height=7)
+
+stockoption <- df %>% select(StockOptionLevel, Attrition) %>% group_by(StockOptionLevel, Attrition) %>% summarize(n=n())  %>%
+  ggplot(aes(x=reorder(StockOptionLevel, -n), y=n, fill=factor(StockOptionLevel))) + geom_bar(stat="identity") + coord_flip() +
+  facet_wrap(~Attrition) + theme_economist() + scale_fill_manual(values=c("#DF0101", "#F5A9A9", "#BEF781", "#04B404")) +
+  guides(fill=guide_legend(title="Stock Option \n Level")) +
+  theme(legend.position="none", plot.background=element_rect(fill="#0D7680"), plot.title=element_text(hjust=0.5, color="white"),
+        axis.text.x=element_text(colour="white"), axis.text.y=element_text(colour="white"),
+        axis.title=element_text(colour="white"),
+        strip.text.x = element_text(color="white"),
+        legend.text=element_text(color="white"))  +
+  geom_label(aes(label=n, fill = factor(StockOptionLevel)), colour = "white", fontface = "italic", hjust=0.55) +
+  labs(title="Number of Employees", x="StockOptionLevel", y="Amount")
+
+# Average income by StockOption using the geom_line()
+income_stockoption <- df %>% select(StockOptionLevel, MonthlyIncome, Attrition) %>% group_by(StockOptionLevel, Attrition) %>%
+  ggplot(aes(x=MonthlyIncome)) + geom_area(aes(fill=factor(StockOptionLevel)), stat ="bin", bins=100, alpha=0.8) + facet_wrap(~Attrition) +
+  theme_economist() +   scale_fill_manual(values=c("#DF0101", "#F5A9A9", "#BEF781", "#04B404")) +
+  guides(fill=guide_legend(title="Stock Option \n Level")) +
+  theme(legend.position="bottom", plot.background=element_rect(fill="#0D7680"), plot.title=element_text(hjust=0.5, color="white"),
+        axis.text.x=element_text(colour="white"), axis.text.y=element_text(colour="white"),
+        axis.title=element_text(colour="white"),
+        strip.text.x = element_text(color="white"),
+        legend.text=element_text(color="black"),
+        legend.background = element_rect(fill="#FFF9F5",
+                                         size=0.5, linetype="solid",
+                                         colour ="black"))
+
+
+plot_grid(stockoption, income_stockoption, nrow=2)
+
 
 options(repr.plot.width=8, repr.plot.height=5)
 
@@ -668,7 +651,7 @@ work_bal_pct <- df %>% select(Attrition, BusinessTravel, WorkLifeBalance) %>% gr
 plot_grid(work_bal_cnt, work_bal_pct, nrow=2)
 
 
-# Let's have a better understanding about each feature through a correlation plot
+# # Let's have a better understanding about each feature through a correlation plot
 options(repr.plot.width=10, repr.plot.height=7)
 
 nums <- select_if(df, is.numeric)
@@ -684,7 +667,7 @@ ggcorrplot(corr,
            title="Correlogram Employee Attritions",
            ggtheme=theme_minimal())
 
-
+#Bi-Variate Analysis
 options(repr.plot.width=10, repr.plot.height=8)
 
 # Positive Correlations
@@ -716,8 +699,8 @@ p3 <-  df %>% select(YearsWithCurrManager, YearsSinceLastPromotion) %>%
   labs(title="Possitive Correlation", subtitle="Years since Last Promotions vs Years with Current Manager", x="Years with Current Manager")
 
 # Age and Monthly Income
-p4 <-  df %>% select(ï..Age, MonthlyIncome) %>%
-  ggplot(aes(x=ï..Age, y=MonthlyIncome)) + geom_point(colour = "#F2DFCE", alpha=1/2) + geom_smooth(method="loess", color="#EE4037") +
+p4 <-  df %>% select(Age, MonthlyIncome) %>%
+  ggplot(aes(x=Age, y=MonthlyIncome)) + geom_point(colour = "#F2DFCE", alpha=1/2) + geom_smooth(method="loess", color="#EE4037") +
   theme_economist() + theme(legend.position="bottom", strip.background = element_blank(), strip.text.x = element_blank(),
                             plot.title=element_text(hjust=0.5, color="white"), plot.subtitle=element_text(hjust=0.5, color="white"), plot.background=element_rect(fill="#0D7680"),
                             axis.text.x=element_text(colour="white"), axis.text.y=element_text(colour="white"),
@@ -726,10 +709,10 @@ p4 <-  df %>% select(ï..Age, MonthlyIncome) %>%
 
 plot_grid(p1, p2, p3,p4, ncol=2, nrow=2)
 
-
+#Splitting out the Data
 set.seed(142)
 # # I personally prefer to shuffle my data before splitting.
-original_df <- df[sample(nrow(df)),]
+original_df <- original_df[sample(nrow(original_df)),]
 
 # Let's encode the ordinal variables
 original_df$BusinessTravel = factor(original_df$BusinessTravel,
@@ -797,12 +780,9 @@ feature_importance <- var_imp %>%
   geom_label(aes(label=paste0(importance, "%")), colour = "white", fontface = "italic", hjust=0.6) +
   labs(title="Feature Importance for our Decision Tree Model", x="Features", y="Importance")
 
-
-
-
 feature_importance
 
-
+#Confusion Matrix
 options(repr.plot.width=8, repr.plot.height=6)
 
 predictions <- predict(rpart.tree, test, type="class")
@@ -827,13 +807,13 @@ prune.rpart.tree <- prune(rpart.tree, cp=0.02) # pruning the tree
 plot(prune.rpart.tree, uniform=TRUE, branch=0.6)
 text(prune.rpart.tree, all=TRUE, use.n=TRUE)
 
-install.packages('partykit')
 library(partykit)
 
 rparty.tree <- as.party(rpart.tree)
 rparty.tree
-plot(rpart.tree)
 
+# options(repr.plot.width=12, repr.plot.height=12)
+# plot(rparty.tree)
 options(repr.plot.width=12, repr.plot.height=12)
 
 fancyRpartPlot(rpart.tree)
@@ -864,6 +844,16 @@ h2o.describe(h2o_train)
 y <- "Attrition"
 x <- setdiff(names(h2o_train), y)
 
+auto_ml <- h2o.automl(
+  y = y,
+  x = x,
+  training_frame = h2o_train,
+  leaderboard_frame = h2o_validation,
+  project_name = "Attrition",
+  max_models = 10,
+  seed = 12
+)
+
 # Check for the top models
 top_models <- auto_ml@leaderboard
 print(top_models)
@@ -877,15 +867,15 @@ obtain_model <- h2o.getModel(best_family@model$metalearner$name)
 # How important is each model to the StackEnsemble
 h2o.varimp(obtain_model)
 
+#Best ML Model to use
 options(repr.plot.width=8, repr.plot.height=4)
-h2o.varimp_plot(obtain_model)
 
-
-xgb <- h2o.getModel(grep("XGBoost", model_id, value = TRUE)[1])
+GBM <- h2o.getModel(grep('GBM', model_id, value = TRUE)[1])
 
 # Examine the variable importance of the top XGBoost model
 # XGBoost can show the feature importance as oppose to the stack ensemble
-h2o.varimp(xgb)
+h2o.varimp(GBM)
+h2o.varimp_plot(obtain_model)
 
 # We can also plot the base learner contributions to the ensemble.
-h2o.varimp_plot(xgb)
+h2o.varimp_plot(GBM)
