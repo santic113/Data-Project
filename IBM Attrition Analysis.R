@@ -1,6 +1,6 @@
 #Import Libraries Needed for Analysis. Dig into h2o package issue.
-li
-library(xgboost)brary(tidyverse)
+library(tidyverse)
+library(xgboost)
 library(skimr)
 library(GGally)
 library(plotly)
@@ -12,6 +12,7 @@ library(rpart)
 library(ggcorrplot)
 library(rpart.plot)
 library(corrgram)
+#You will need to download 64bit version of Java, use the following link: https://www.oracle.com/java/technologies/javase-jdk8-downloads.html
 library(h2o)
 library(ggplot2)
 library(ggthemes)
