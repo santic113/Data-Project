@@ -35,6 +35,8 @@ library(rattle)
 options(repr.plot.width=8, repr.plot.height=6)
 options(warn=-1)
 
+test_tbl
+
 #Uploading our Data into R via a CSV file
 df <- read.csv("C:/Users/santi/Documents/R Kaggle Data/IBM_Attrition_Data_V2.csv")
 head(df)
