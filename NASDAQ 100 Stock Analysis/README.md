@@ -13,7 +13,7 @@ The goal of this project was the following:
 * Create [Tableau](https://public.tableau.com/profile/santiago.canon#!/vizhome/NASDAQ_100_Stock_Analysis/StockDashboard) dashboard
 
 ## Results
-* **[Tableau Dashboard](https://public.tableau.com/profile/santiago.canon#!/vizhome/NASDAQ_100_Stock_Analysis/StockDashboard**  - That shows advanced quant metrics such as Bollinger bands, moving-average convergence divergence, signal, relative strength index, and CCI
+* [Tableau Dashboard](https://public.tableau.com/profile/santiago.canon#!/vizhome/NASDAQ_100_Stock_Analysis/StockDashboard  - That shows advanced quant metrics such as Bollinger bands, moving-average convergence divergence, signal, relative strength index, and CCI
 * Google Bigquery Table that stores daily historical stock prices and advanced quant metrics for the past 365 from when I created this script
 
 ## Screenshot of Dashboard
