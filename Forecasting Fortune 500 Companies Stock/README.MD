@@ -13,6 +13,7 @@ The goal of this project was the following:
 
 ## Results
 * **[Tableau Dashboard](https://public.tableau.com/profile/santiago.canon#!/vizhome/ForecastallFortune500CompayStock60DaysOut/ForecastingStockDashboard)**  - Colorful Tableau dashboard showing the our forecasting results
+* Google Bigquery Table that stores daily historical stock prices for the past 365 from when I created this script 
 
 ## Screenshot of Dashboard
 ![image](https://user-images.githubusercontent.com/43589961/111873782-7952b680-8968-11eb-8aba-6f56b81f44ef.png)
