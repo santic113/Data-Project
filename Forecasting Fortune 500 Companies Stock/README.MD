@@ -12,4 +12,7 @@ The goal of this project was the following:
 * Create [Prophet](https://cran.r-project.org/web/packages/prophet/prophet.pdf) model using the Prophet package  
 
 ## Results
-* **[Tableau Dashboard](https://public.tableau.com/profile/santiago.canon#!/vizhome/ForecastallFortune500CompayStock60DaysOut/ForecastingStockDashboard)**  - Colorful Tableau dashboard showing the our forecasting results 
+* **[Tableau Dashboard](https://public.tableau.com/profile/santiago.canon#!/vizhome/ForecastallFortune500CompayStock60DaysOut/ForecastingStockDashboard)**  - Colorful Tableau dashboard showing the our forecasting results
+
+## Screenshot of Dashboard
+![image](https://user-images.githubusercontent.com/43589961/111873782-7952b680-8968-11eb-8aba-6f56b81f44ef.png)
