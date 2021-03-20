@@ -18,4 +18,4 @@ The majority of my projects will be in R, however I am also well-versed in SQL f
 * **Atom** - My preferred text editor
 
 ## Current Developments
-I am currently taking a front end web development course while also taking weekly courses in R on DataCamp. I hope this year I can become a proficient JavaScript, HTML, and CSS programmer
+* **[Front-End Web Development](https://www.udemy.com/course/front-end-web-development/?LSNPUBID=JVFxdTr9V80&ranEAID=JVFxdTr9V80&ranMID=39197&ranSiteID=JVFxdTr9V80-mJD4LYh8S9unamPMU9fcVg&utm_medium=udemyads&utm_source=aff-campaign)** I am currently taking this course to learn HTML, CSS, JavaScript, jQuery, and Bootstrap. 
