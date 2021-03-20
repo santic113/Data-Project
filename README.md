@@ -6,6 +6,6 @@ The majority of my projects will be in R, however I am also well-versed in SQL
 
 ## Get to Know Me
 
-* **[LinkedIn](https://www.linkedin.com/in/santiago-canon-data-analyst/)**
-* **Tableau Public** - https://public.tableau.com/profile/santiago.canon#!/
-* **RPubs** - https://rpubs.com/santic_113
+* **[LinkedIn](https://www.linkedin.com/in/santiago-canon-data-analyst/)** - Get to know my professional background & my experince
+* **[Tableau Public](https://public.tableau.com/profile/santiago.canon#!/)** - Get to know some of my public dashboards created in Tableau
+* **[RPubs](https://rpubs.com/santic_113)** - Get to know some of my public R projects 
