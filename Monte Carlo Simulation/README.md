@@ -13,3 +13,5 @@ The goal of this project was the following:
 
 ## Screenshot of Monte Carlo Simulation
 ![image](https://user-images.githubusercontent.com/43589961/111876306-9a210900-8974-11eb-854d-1bd0dce380e7.png)
+
+![image](https://user-images.githubusercontent.com/43589961/111876398-e8360c80-8974-11eb-9cf1-127b9fc20066.png)
