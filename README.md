@@ -1,8 +1,8 @@
-# Data-Project
+# Summary
 
 Workspace where I will post some of the personal data science projects I work on. Within each folder you will find a description of a given project, approach, and goal. I will also include links to final output results such as a Tableau Dashboard.
 
-The majority of my projects will be in R, however I am also well-versed in SQL for querying & data structing/prep. For visualzation my skills include Tableau, PowerBI, and R(specifically ggplot2)
+The majority of my projects will be in R, however I am also well-versed in SQL for querying & data structing/prep. For visualization my skills include Tableau, PowerBI, and R(specifically ggplot2)
 
 ## Get to Know Me
 
