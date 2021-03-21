@@ -1,5 +1,7 @@
 ## **Challenge Summary & Information**
 
+## [RPubs Document](https://rpubs.com/santic_113/742618) for Results & Visuals
+
 ### **Challenge**
 <font size="4"> The goal of this challenge is to use a dataset based on millions of real anonymized accommodation reservations to come up with a strategy for making the best recommendation for their next destination in real-time. </font>
 <br><br><br>
