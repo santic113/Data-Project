@@ -1,0 +1,401 @@
+---
+title: "Booking.com Data Challenge"
+author: "Santiago Canon"
+date: "12/27/2020"
+output:
+  html_document:
+    highlight: monochrome
+    theme: flatly
+
+---
+
+<style>
+    body { background-color: #EEEEEE; }
+</style>
+
+
+![](C:/Users/santi/Documents/Miscellaneous/Booking_logo_blue.png)
+
+<br><br><br>
+
+# Exploration Sections {.tabset .tabset-fade .tabset-pills}
+
+## **Challenge Summary & Information**
+
+### **Challenge**
+<font size="4"> The goal of this challenge is to use a dataset based on millions of real anonymized accommodation reservations to come up with a strategy for making the best recommendation for their next destination in real-time. </font>
+<br><br><br>
+
+### **Dataset**
+* <font size="4"> The training dataset consists of over a million of anonymized hotel reservations, based on real data, with the following features: </font>
+* <font size="4">  **user_id** - User ID
+* **checkin** - Reservation check-in date
+* **checkout** - Reservation check-out date- created_date - Date when the reservation was made
+* **affiliate_id** - An anonymized ID of affiliate channels where the booker came from (e.g. direct, some third party referrals, paid search engine, etc.)
+* **device_class** - desktop/mobile
+* **booker_country** - Country from which the reservation was made (anonymized)
+* **hotel_country** - Country of the hotel (anonymized)
+* **city_id** - city_id of the hotel's city (anonymized)
+* **utrip_id** - Unique identification of user's trip (a group of multi-destinations bookings within the same trip).
+* **Note** -Each reservation is a part of a customer's trip (identified by utrip_id) which includes at least 4 consecutive reservations. The check-out date of a reservation is the check-in date of the following reservation in their trip.
+The evaluation dataset is constructed similarly, however the city_id of the final reservation of each trip is concealed and requires a prediction. </font>
+<br><br><br>
+
+### **Evaluation & Goal**
+<font size="4"> The goal of the challenge is to predict (and recommend) the final city (city_id) of each trip (utrip_id). We will evaluate the quality of the predictions based on the top four recommended cities for each trip by using Precision@4 metric (4 representing the four suggestion slots at Booking.com website). When the true city is one of the top 4 suggestions (regardless of the order), it is considered correct. </font>
+
+
+## Structure of Project & Exploration
+
+### **Quotes on Data & Analytics**
+> “Data are just summaries of thousands of stories – tell a few of those stories to help make the data meaningful.” — Chip & Dan Heath
+
+> "A data scientist is someone who can obtain, scrub, explore, model, and interpret data, blending hacking, statistics, and machine learning. Data scientists not only are adept at working with data, but appreciate data itself as a first-class product.” – Hillary Mason, founder, Fast Forward Labs.
+
+> “Information is the oil of the 21st century, and analytics is the combustion engine.” – Peter Sondergaard, senior vice president, Gartner Research.
+<br><br><br>
+
+### **What are my aims with this exploration?**  
+* <font size="4"> Distributions </font>
+* <font size="4"> Basic Descriptive Metrics </font>
+* <font size="4"> Correlations/ Relationships </font>
+* <font size="4"> Identifying Outliers or Odd Data </font>
+* <font size="4"> Seasonality/Time Series</font>
+* <font size="4"> Creation of New Columns for Feature Engineering </font>
+* <font size="4"> Outlier Detection </font>
+* <font size="4"> Volume </font>
+<br><br><br>
+
+### **Structure of the Exploration**
+*  <font size="4"> **Questions**:  Questions will be asked previous to the visualization to make sure the visualizations shown in this project are insightful.</font>
+
+* <font size="4"> **Summary**: After each section I will provide a summary to understand what we got from the visualizations
+
+* <font size="4"> **Observations/Comments**: Any observations I made with a given metric or visual or comments I have about a given summary of data
+<br><br><br>
+
+### **Objective of the Exploration**
+* <font size="4"> **Observations** - What can we learn from this deep dive that we didn't know before from our inital observations of the dataset. </font>
+
+* <font size="4"> **Understanding Current Dataset** - The intention of this exploration is to also understand the booking.com dataset and how a customer travels using booking.com. </font>
+
+* <font size="4"> **Modeling** - Creating a model to predict (and recommend) the final city (city_id) of each trip (utrip_id) </font>
+<br><br><br>
+
+### **Other Thoughts**
+* <font size="4"> Analytics teams often make the trade-off between speed and accuracy. The trade-off often
+results in solutions that are challenging to interpret and deploy for the wider organization. A natural drawback
+of scrappy or agile analytics approaches for systematic solutions are wide gaps or 'blind spots' in analysis and
+unstable/brittle tools, often leading to sub-optimal outcomes. This write up serves to document  and compare past business cases, analytics methodologies
+and learnings in order for the reader to gain a good understanding of historical efforts to date. </font>
+
+## Data Exploration
+
+
+```{r , include=FALSE}
+# Installing needed Libraries
+library(dplyr)        # used for data manipulation
+library(ggplot2)      # Used to create visuals
+library(ranger)       # Used to create random forest model
+library(cowplot)      # Used to create a matrix out of plots
+library(RColorBrewer) # Used to leverage types of ggplot themes I like such as the economist theme
+library(ggthemes)     # ggplot themes
+library(kableExtra)   # Used to create html output tables in the markdown document
+library(tidyverse)    # Install needed tidyverse packages such as purrr
+library(tidyr)
+library(lubridate)    #  Used to make it easier to manipulate dates
+```
+
+```{r , include=FALSE}
+# Read in booking.com dataset
+booking_dataset <- read.csv("C:/Users/santi/Documents/Miscellaneous/Booking_com_dataset.csv")
+```
+
+
+### **Viewing the Data Types of Each Column**  
+* <font size="4"> **Observations** - The data is made of **9 variables** (summarized in the first tab) and **1,048,575 rows** of data.  </font>
+```{r, echo = FALSE, message = FALSE}
+str(booking_dataset)
+```
+
+
+### **Viewing a Small Subset of the Data**  
+* <font size="4"> **Observations/Comments** - Below are 10 rows of the dataset. My first thoughts are to undertand the following:
+* Distinct Number of booker countires to understand if we are looking at a wide array of countries or just a few
+* Distinct Number of hotel countries to understand if we are looking at a wide array of hotels or just a few
+* Distinct Number of utrip IDs to understand how many trips in total are in the dataset
+* Distinct Number city IDs to understand if we are looking at a wide array of cities or just a few. </font>
+
+### **Additional Datapoints**
+* <font size="4"> **Observations/Comments** - After observing the data there is potential to create additional columns of data from the exisiting dataset which incude:
+* Trip duration for a given city ID or in other words how long was the customer in a given city during their itenierary.
+* Entire trip duration, how long was the entire trip from the first check-in date to the last check out date.
+* How many cities in total did a customer visit.
+* How many countires in total did the customer visit. </font>
+
+```{r, echo = FALSE, message = FALSE}
+booking_subset <-  
+  booking_dataset %>%
+  select(everything()) %>%  
+  head(n = 10)
+
+booking_subset %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), position = "center")
+
+```
+
+
+### **Viewing Distinct Counts in the Data**  
+* <font size="4"> **Observations/Comments** -Below are the counts for parts of the dataset:
+* Note that there are only 5 distinct countries within the dataset. Potentially these are the customers that booking.com recieves the most volume
+* There are 193 hotel counties, we can assume that may include every country in the world
+* 38k cities were visited
+* 3k in affialiate ID
+* 181k unique users
+* Unsure of any deep observations here, however it is good to have context around these data points as we continue to explore and model. </font>
+<br><br><br>
+```{r, echo = FALSE, message = FALSE}
+ booking_dataset_count <-
+  booking_dataset %>%
+  summarise(user_id_cnt = n_distinct(user_id), city_id_cnt = n_distinct(city_id), affiliate_id_cnt = n_distinct(affiliate_id),
+            booker_country_cnt = n_distinct(booker_country), hotel_country_cnt = n_distinct(hotel_country), utrip_id_cnt = n_distinct(utrip_id))
+
+booking_dataset_count %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), position = "center")
+
+```
+<br><br><br>
+
+### **Creating New Columns in the Data for Additional Data Points**  
+* <font size="4"> **Observations/Comments** -Below are the new columns and the defintions:
+* **Stop Duration** - How many days the travler stayed at a given city
+* **Trip Duration** - How many days did the entire trip last by user ID
+* **Total City Dest** - How many cities did the travler visit during the entire duration of the trip
+* **Month Name** - Month extracted from the checkin date
+* **Year** - Year extracted from the checking date
+* **Leg of Trip** - For a given trip-city combination, what leg of the trip was the city. 1,2,3...
+</font>
+<br><br><br>
+```{r, echo = FALSE, message = FALSE}
+
+#getting the date difference however as a time data type
+booking_dataset$diff <-  as.Date(booking_dataset$checkout,"%m/%d/%Y") - as.Date(booking_dataset$checkin,"%m/%d/%Y")
+
+#converting the time data type to numeric to create a sum over partition by to understand
+booking_dataset <- booking_dataset %>%   
+mutate(stop_duration = as.numeric(diff)) %>%    
+  select(-diff)
+
+#dplyr sum over partition by
+booking_dataset <-  booking_dataset %>% group_by(user_id) %>%      
+  mutate(trip_duration = sum(stop_duration))
+
+#dplyr sum over partition by
+booking_dataset <-  booking_dataset %>% group_by(user_id) %>%      
+  mutate(total_city_dest = n_distinct(city_id))
+
+#Extract Month from date
+booking_dataset$month <- month(as.POSIXlt(booking_dataset$checkin, format="%m/%d/%Y"))  
+
+#Extract Year from Date
+booking_dataset$year <- year(as.POSIXlt(booking_dataset$checkin, format="%m/%d/%Y"))
+
+#Apply month name from month number
+booking_dataset <-  booking_dataset %>%  
+  mutate(month_name = month.name[month])
+
+#Create Rank Function to Create Legs within Each Trip
+booking_dataset <-  booking_dataset %>%
+  group_by(utrip_id) %>%
+  mutate(leg_of_trip = rank(checkin))
+
+
+#Limiting the dataset to ten rows to make it easy to render in the markdown file
+booking_subset_new <-  
+  booking_dataset %>%
+  select(everything()) %>%  
+  head(n = 10)
+
+#Using to render a table in a claner format in RMarkdown
+booking_subset_new %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), position = "left")
+
+
+
+
+
+```
+<br><br><br>
+
+### **Exploraing the Data Through Visuals**  
+* <font size="4"> **Observations/Comments** -Below I will explore the data using ggplot2 visuals:
+* **Trip by Booking Country** - What is the volume of trips by country
+ **Chart 1** - Note there are only 5 booking countries in the dataset with Gondal having the most volume
+</font>
+<br><br><br>
+```{r, echo = FALSE, message = FALSE, fig.width=13, fig.height=7.5}
+
+
+booking_dataset_volume <-  booking_dataset %>%  
+  group_by(booker_country) %>%
+  summarise(trips = n_distinct(utrip_id)) %>%  
+  arrange(desc(trips))
+
+volume_by_country <-  ggplot(booking_dataset_volume, aes(x = reorder(booker_country, -trips), y = trips))+
+  geom_col(fill = "#91b8bd", alpha = 1.25,width = 0.60)+
+  theme_economist()+
+  xlab("Booker Country") +
+  ylab("Count of Trips") +
+  ggtitle("Trip by Booking Country")+
+  labs(subtitle = "Chart 1 - Volume" )+
+  geom_text(aes(label = trips, vjust = -.50), color = "black")+
+  theme(plot.title = element_text(size=14), axis.text=element_text(size=11),
+        axis.title=element_text(size=11), strip.text = element_text(size=11),
+        plot.subtitle = element_text(face = 'italic', hjust = 0),
+        axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 20, r = 20, b = 0, l = 0)))
+
+
+volume_by_country
+```
+<br><br><br>
+
+#### **Stop Duration (Days)**
+* <font size="4"> **Question:** What is the distribution of the number days a traveler stayed at for a given stop?
+* **Observations:** Do the travlers stay for a short period of time during a stop or a longer period? Is there a relationship with this and the number of cities they visit?
+</font>
+```{r, echo = FALSE, message = FALSE, fig.width=13, fig.height=7.5}
+
+booking_dataset_volume_bystops <-  booking_dataset %>%  
+  group_by(stop_duration) %>%
+  summarise(stop_cnt = n_distinct(utrip_id)) %>%  
+  filter(stop_cnt > 500) %>%
+  arrange(desc(stop_cnt))
+
+
+volume_by_country_stops <-  ggplot(booking_dataset_volume_bystops, aes(x = reorder(stop_duration, stop_cnt), y = stop_cnt))+
+  geom_col(fill = "#91b8bd", alpha = 1.25,width = 0.60)+
+  theme_economist()+
+  xlab("Stop Duration (Days)") +
+  ylab("Count of Stops") +
+  ggtitle("Count by Stop Duration")+
+  labs(subtitle = "Chart 2 - Volume" )+
+  coord_flip()+
+    geom_text(aes(label = stop_cnt, hjust = 0), color = "black")+
+  theme(plot.title = element_text(size=14), axis.text=element_text(size=11),
+        axis.title=element_text(size=11), strip.text = element_text(size=11),
+        plot.subtitle = element_text(face = 'italic', hjust = 0),
+        axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 20, r = 20, b = 0, l = 0)))
+
+
+volume_by_country_stops
+
+```
+<br><br><br>
+
+#### **Trip Duration (Days) Count**
+* <font size="4"> **Question:** How long was a travelers entire trip?
+* **Observations:** Does the number of a days a trip is correlate positvely with the number of cities a traveler may visit?
+</font>
+```{r, echo = FALSE, message = FALSE, fig.width=13, fig.height=7.5}
+
+booking_dataset_volume_bytrip <-  booking_dataset %>%  
+  group_by(trip_duration) %>%
+  summarise(trip_cnt = n_distinct(utrip_id)) %>%  
+  filter(trip_cnt > 500) %>%
+  arrange(desc(trip_cnt))
+
+
+
+volume_by_country_trips_plot <-  ggplot(booking_dataset_volume_bytrip, aes(x = reorder(trip_duration, trip_cnt), y = trip_cnt))+
+  geom_col(fill = "#91b8bd", alpha = 1.25,width = 0.60)+
+  theme_economist()+
+  xlab("Trip Duration (Days)") +
+  ylab("Count of Trips") +
+  ggtitle("Count by Trip Duration")+
+  labs(subtitle = "Chart 3 - Volume" )+
+  coord_flip()+
+    geom_text(aes(label = trip_cnt, hjust = 0), color = "black")+
+  theme(plot.title = element_text(size=14), axis.text=element_text(size=11),
+        axis.title=element_text(size=11), strip.text = element_text(size=11),
+        plot.subtitle = element_text(face = 'italic', hjust = 0),
+        axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 20, r = 20, b = 0, l = 0)))
+
+
+volume_by_country_trips_plot
+```
+<br><br><br>
+
+#### **City Visits During Trip**
+* <font size="4"> **Question:** How many cities did a given travler visit?
+* **Observations:** I am curious about travlers that visited more than 15 cities during their trip. Are these outliers or bad data?
+* **Observations:** Does the number of a days a trip is correlate positvely with the number of cities a traveler may visit?
+</font>
+
+```{r, echo = FALSE, message = FALSE, fig.width=13, fig.height=7.5}
+
+
+booking_dataset_volume_bycity_visits <-  booking_dataset %>%  
+  group_by(total_city_dest) %>%
+  summarise(city_cnt = n_distinct(utrip_id)) %>%  
+  filter(city_cnt > 100) %>%
+  arrange(desc(city_cnt))
+
+
+volume_by_country_city_visits <-  ggplot(booking_dataset_volume_bycity_visits, aes(x = reorder(total_city_dest, city_cnt), y = city_cnt))+
+  geom_col(fill = "#91b8bd", alpha = 1.25,width = 0.60)+
+  theme_economist()+
+  xlab("Count Cities Visited") +
+  ylab("Count of Trips") +
+  ggtitle("Number of Cities Visited")+
+  labs(subtitle = "Chart 4 - Volume" )+
+  coord_flip()+
+    geom_text(aes(label = city_cnt, hjust = 0), color = "black")+
+  theme(plot.title = element_text(size=14), axis.text=element_text(size=11),
+        axis.title=element_text(size=11), strip.text = element_text(size=11),
+        plot.subtitle = element_text(face = 'italic', hjust = 0),
+        axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 20, r = 20, b = 0, l = 0)))
+
+
+volume_by_country_city_visits
+
+```
+
+
+#### **City Visits During Trip**
+* <font size="4"> **Question:** How many cities did a given travler visit?
+* **Observations:** I am curious about travlers that visited more than 15 cities during their trip. Are these outliers or bad data?
+* **Observations:** Does the number of a days a trip is correlate positvely with the number of cities a traveler may visit?
+</font>
+
+```{r, echo = FALSE, message = FALSE, fig.width=13, fig.height=7.5}
+
+
+booking_dataset_device <-  booking_dataset %>%  
+  group_by(device_class) %>%
+  summarise(device_cnt = n_distinct(utrip_id)) %>%  
+  arrange(desc(device_cnt))
+
+volume_by_device <-  ggplot(booking_dataset_device, aes(x = reorder(device_class, -device_cnt), y = device_cnt))+
+  geom_col(fill = "#91b8bd", alpha = 1.25,width = 0.60)+
+  theme_economist()+
+  xlab("Device Class") +
+  ylab("Count of Trips") +
+  ggtitle("Device Class Count")+
+  labs(subtitle = "Chart 5 - Volume" )+
+  geom_text(aes(label = device_cnt, vjust = -.50), color = "black")+
+  theme(plot.title = element_text(size=14), axis.text=element_text(size=11),
+        axis.title=element_text(size=11), strip.text = element_text(size=11),
+        plot.subtitle = element_text(face = 'italic', hjust = 0),
+        axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 20, r = 20, b = 0, l = 0)))
+
+
+volume_by_device
+```
